@@ -11,15 +11,26 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @classInfo = params[:sort]
-    if @classInfo == 'title'
-      @movies = Movie.all.order('title')
-    elsif @classInfo == 'date'
-      @movies = Movie.all.order('release_date')
-    else
-      @movies = Movie.all
-    end
-  end
+     @all_ratings = Movie.get_ratings
+     @classInfo = params[:sort]
+     if params["ratings"] == nil
+       if @classInfo == 'title'
+         @movies = Movie.all.order('title')
+       elsif @classInfo == 'date'
+         @movies = Movie.all.order('release_date')
+       else
+         @movies = Movie.all
+       end
+     else
+       if @classInfo == 'title'
+         @movies = Movie.where(:rating => params["ratings"].keys).order('title')
+       elsif @classInfo == 'date'
+         @movies = Movie.where(:rating => params["ratings"].keys).order('release_date')
+       else
+         @movies = Movie.where(:rating => params["ratings"].keys)
+       end
+     end
+   end
 
   def new
     # default: render 'new' template
